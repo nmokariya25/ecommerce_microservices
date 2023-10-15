@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using PaymentService;
+using PaymentService.MQ;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,7 +10,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddDbContext<ECom_PaymentDBContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("PaymentDBDatabase")));
+builder.Services.AddScoped<IRabitMQProducer, RabitMQProducer>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
