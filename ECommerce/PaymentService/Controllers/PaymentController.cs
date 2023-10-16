@@ -27,14 +27,19 @@ namespace PaymentService.Controllers
         [Route("payments")]
         public ActionResult<Payment> ProcessPayment([FromBody] Payment payment)
         {
-            payment.Status = "PAID";
+            bool paymentStatus = true;
+            // get the live payment status
+            if (paymentStatus)
+                payment.Status = "PAID";
+            else
+                payment.Status = "FAILED";
             _context.Payments.Add(payment);
             _context.SaveChanges();
             if (payment.Id == 0)
                 return StatusCode(StatusCodes.Status500InternalServerError, "Something Went Wrong");
 
             _rabitMQProducer.SendMessage(payment);
-            
+
             return Ok(payment);
         }
     }
